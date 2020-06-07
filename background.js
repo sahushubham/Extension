@@ -5,27 +5,41 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status == "complete") {
     let currentURL = tab.url;
     console.log('Current url', currentURL);
-    sites.push(currentURL);
+    var date=Date.now()/1000;
+    var time=0;
+    chrome.storage.sync.set({'date':date},function(){
+      console.log("time now is" + Date.now()/1000);
+    });
+    console.log("Tab id of this tab is :" +tabId);
+    sites.push({"tabId":tabId,"CurrentURl":currentURL,"Time":time});
   }
 });
 
-
-
-chrome.tabs.query({
-  "currentWindow": true, "active": true, status: "complete",
-  windowType: "normal",
-}, function (tabs) {
-  let tab = tabs[0];
-  let currenttaburl = tab.url;
-  console.log('active tab url', currenttaburl)
+chrome.tabs.onRemoved.addListener((tabId,removeInfo)=>{
+  chrome.storage.sync.get('date',function(result){
+    console.log("time spent on active tab is "+ (Date.now()/1000-result.date));
+  });
+  console.log("Tab id of this tab is :" +tabId);
 });
+
+
+
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.message == "handshake") {
     chrome.runtime.sendMessage({ sites });
   }
 });
-
+setInterval(()=>{
+  chrome.tabs.query({
+    "currentWindow": true, "active": true, status: "complete",
+    windowType: "normal",
+  }, function (tabs) {
+    let tab = tabs[0];
+    let currenttaburl = tab.url;
+    console.log('active tab url', currenttaburl)
+  });
+},5000);
 
 // chrome.windows.remove()
 // setInterval(() => {

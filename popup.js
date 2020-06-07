@@ -1,7 +1,7 @@
 chrome.runtime.sendMessage({ message: 'handshake' })
 
 chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        console.log(request);
+    function (message, sender, sendResponse) {
+        console.log(message);
     }
 );
