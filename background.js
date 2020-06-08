@@ -9,6 +9,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     var time=0;
     console.log("Tab id is "+tabId);
     sites.push({"tabId":tabId,"CurrentURl":currentURL,"Time":time});
+    chrome.storage.sync.set({sites});
     setInterval(()=>{
       chrome.tabs.onRemoved.addListener((tabId,removeInfo)=>{
         console.log("Removed Tag is"+ tabId);
@@ -20,8 +21,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
           {
             sites[i]["Time"]=Date.now()/1000-date;;
             console.log("Value of i is"+i);
-            console.log("time spent"+ time);
+            console.log("time spent on "+ sites[i]["CurrentURL"]+ "is"+ time);
             console.log("value of sites[i][Time] is" + sites[i]["Time"]);
+            chrome.tabs.storage.sync.set(sites);
           }
         }
       });
